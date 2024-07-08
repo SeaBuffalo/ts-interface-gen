@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="index.css">
+    <script src="bindings.js" type="module" defer></script>
+    <title>TS Interface Gen</title>
+  </head>
+  <body>
+    <label class="title-label" for="title">Interface Name</label>
+    <span class="title-hdr">
+      <input type="text" name="title" id="title" class="title">
+      <button id="reset">Reset</button>
+    </span>
+    <label for="input">
+      <small class="ctr-title">Object Model</small>
+    </label>
+    <textarea class="input" id="input"></textarea>
+    <button type="submit" id="submit" class="submit">
+      Convert
+    </button>
+    <div id="result-ctr" class="hidden">
+      <small class="ctr-title">Generated Interface</small>
+      <div name="result" id="result" class="result">
+        <button class="copy" id="copy">Copy</button>
+        <pre id="interface"></pre>
+      </div>
+    </div>
+
+    <div class="modal-wrapper hidden" id="modal-wrapper">
+      <aside id="modal">
+        <div class="modal-body">
+          <p id="modal-question"></p>
+          <input type="text" id="modal-input">
+        </div>
+        <span class="modal-btns">
+          <button id="modal-no">No</button>
+          <button id="modal-yes">Yes</button>
+        </span>
+      </aside>
+    </div>
+  </body>
+</html>

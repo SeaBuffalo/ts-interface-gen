@@ -1,0 +1,16 @@
+{
+  "name": "ts-interface-gen",
+  "version": "1.0.0",
+  "description": "generate ts interfaces from json",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "bschulze",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.1.0"
+  },
+  "type": "module"
+}
