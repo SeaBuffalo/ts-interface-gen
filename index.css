@@ -172,12 +172,12 @@ button:focus:enabled {
   left: 0;
   right: 0;
   margin: auto auto;
-  height: 40vh;
+  height: 60vh;
   max-height: 600px;
   min-height: 250px;
-  width: 60vw;
+  width: 70vw;
   min-width: 300px;
-  max-width: 968px;
+  max-width: 768px;
   background-color: white;
   border: 1px solid rgba(0,0,0,.8);
   border-radius: 4px;
@@ -191,10 +191,24 @@ button:focus:enabled {
 .modal-body {
   display: flex;
   flex-direction: column;
+  height: calc(100% - 40px);
+  margin-bottom: .5rem;
 }
 
 #modal-question {
-  font-size: 18px;
+  margin: .5rem 0 0 0;
+  /* height: 5%; */
+}
+
+#modal-object {
+  overflow-y: auto;
+  font-size: 14px;
+  height: calc(100% - 1rem);
+  margin-bottom: .5rem;
+}
+
+#modal-input {
+  margin: 0;
 }
 
 .modal-btns {
@@ -203,11 +217,16 @@ button:focus:enabled {
   align-items: center;
   width: 100%;
   box-sizing: border-box;
+  height: 40px;
 }
 
 #modal-no,
 #modal-yes {
   width: 100px;
+}
+
+#modal-yes:disabled {
+  background-color: rgba(0,0,0,.2);
 }
 
 .slide-in {

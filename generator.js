@@ -46,7 +46,7 @@ const parseEntries = async(tsInterface, obj, depth) => {
    * for nested objects
    */
   for (const [key, val] of Object.entries(obj)) {
-    tsInterface += indent((key + ": "), depth);
+    tsInterface += indent((formatKey(key) + ": "), depth);
     const typeofVal = typeof val;
     if (typeofVal === "object") {
       if (Array.isArray(val)) {
@@ -87,6 +87,30 @@ const parseEntries = async(tsInterface, obj, depth) => {
   return tsInterface;
 }
 
+const formatKey = (k) => {
+  let formattedKey = "";
+  for (let i = 0; i < k.length; i++) {
+    if (isInvalidInterfaceChar(k.charAt(i))) continue;
+    if (i > 0 && isInvalidInterfaceChar(k.charAt(i - 1))) {
+      formattedKey += k.charAt(i).toUpperCase();
+    } else {
+      formattedKey += k.charAt(i);
+    }
+  }
+
+  return formattedKey;
+}
+
+const isInvalidInterfaceChar = (c) => {
+  if (
+    c === "-" || c === "_" ||
+    c === ":"
+  ) {
+    return true;
+  }
+  return false;
+}
+
 const indent = (input, depth) => {
   let spacing = "";
   for (let i = 0; i < depth; i++) {
@@ -109,30 +133,38 @@ const nameObject = async(key, val) => {
 const promptName = async(key, val) => {
   const wrapper = document.getElementById("modal-wrapper");
   const modal = document.getElementById("modal");
-  const question = document.getElementById("modal-question");
+  const question = document.getElementById("modal-object");
   const noButton = document.getElementById("modal-no");
   const yesButton = document.getElementById("modal-yes");
   const input = document.getElementById("modal-input");
 
-  question.innerText = 
-    "Would you like to provide an interface for this object?\n" 
-    + key + ": "
-    + JSON.stringify(val);
+  question.innerText = key + ": "
+    + renderObjectForModal(JSON.stringify(val));
   
   modal.classList.add("slide-in");
   wrapper.classList.remove("hidden");
+  yesButton.setAttribute("disabled", "true");
   input.focus();
 
   let decisionMade = false;
   let decision = "";
 
   const decide = () => decisionMade = true;
+  const submit = () => {
+    decision = input.value;
+    decide(); 
+  }
+  const toggleEnableButton = (e) => {
+    if (!e.target.value.length) {
+      yesButton.setAttribute("disabled", "");
+    } else {
+      yesButton.removeAttribute("disabled");
+    }
+  }
 
   noButton.addEventListener("click", decide);
-  yesButton.addEventListener("click", () => {
-    decision = input.value;
-    decide();
-  });
+  yesButton.addEventListener("click", submit);
+  input.addEventListener("input", toggleEnableButton);
 
   const until = async(condition) => {
     const poll = (resolve) => {
@@ -148,8 +180,67 @@ const promptName = async(key, val) => {
 
   await until(() => decisionMade === true);
 
+  /** cleanup */
+  noButton.removeEventListener("click", decide);
+  yesButton.removeEventListener("click", submit);
+  input.removeEventListener("input", toggleEnableButton);
   wrapper.classList.add("hidden");
   modal.classList.remove("slide-in");
   input.value = "";
+  
   return decision;
+}
+
+const renderObjectForModal = (val) => {
+  let returnString = "";
+  let nest = 0;
+  const trimmed = val.trim();
+
+  for (let i = 0; i < trimmed.length; i++) {
+    switch (trimmed.charAt(i)) {
+      case "{":
+        nest++;
+        returnString += "{\n" + indent("", nest);
+        break;
+      case "[":
+        nest ++;
+        returnString += "[\n" + indent("", nest);
+        break;
+      case ":":
+        if (trimmed.charAt(i - 1) === "\"") {
+          returnString += ": ";
+        } else {
+          returnString += ":";
+        }
+        break;
+      case "\"":
+        if (trimmed.charAt(i - 1) === ",") {
+          returnString += "\n" + indent("", nest) + "\"";
+        } else {
+          returnString += "\"";
+        }
+        break;
+      case "}":
+        nest--;
+        if (trimmed.charAt(i - 1) !== " ") {
+          returnString += ("\n" + indent("", nest));
+        }
+        if (trimmed.charAt(i + 1) === ",") {
+          returnString += "}";
+        } else {
+          if (trimmed.charAt(i + 1) === "]") nest--;
+          returnString += "}\n" + indent("", nest);
+        }
+        break;
+      case "]":
+        nest--;
+        returnString += "]\n" + indent("", nest);
+        break;
+      default:
+        returnString += val.charAt(i);
+        break;
+    }
+  }
+
+  return returnString;
 }
