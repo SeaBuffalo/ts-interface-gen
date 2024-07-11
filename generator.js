@@ -4,10 +4,10 @@
  */
 let nestedInterfaces = [];
 
-export const getParentAndChildInterfaces = async(title, jsonInput) => {
+const getParentAndChildInterfaces = async(title, jsonInput) => {
   try {
     const obj = JSON.parse(jsonInput);
-    const parent = await convert(title, obj);
+    const parent = await format(title, obj);
     if (parent) {
       const declarations = parent 
         + "\n\n" 
@@ -29,7 +29,7 @@ export const getParentAndChildInterfaces = async(title, jsonInput) => {
   }
 }
 
-const convert = async(title, obj) => {
+const format = async(title, obj) => {
   let tsInterface = "";
   return '<span class="color-orange">interface </span>' 
     + `<span class="color-purple">${title}</span>`
@@ -121,7 +121,7 @@ const indent = (input, depth) => {
 
 const nameObject = async(key, val) => {
   const name = await promptName(key, val);
-  if (name) nestedInterfaces.push(await convert(name, val));
+  if (name) nestedInterfaces.push(await format(name, val));
   return name;
 }
 
@@ -244,3 +244,5 @@ const renderObjectForModal = (val) => {
 
   return returnString;
 }
+
+module.exports = getParentAndChildInterfaces;

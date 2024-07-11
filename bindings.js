@@ -1,4 +1,4 @@
-import { getParentAndChildInterfaces } from "./generator.js"
+const getParentAndChildInterfaces = require("./generator.js");
 
 const titleInput = document.getElementById("title");
 const jsonInput = document.getElementById("input");
